@@ -3,60 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Price Predictor</title>
+    <title>House Price Prediction</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #f2f2f2;
             margin: 0;
+            padding: 20px;
         }
         .container {
-            width: 300px;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
             padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-        input, button {
+        h2 {
+            color: #0e4c92;
+        }
+        input[type="number"] {
             width: 100%;
-            margin: 10px 0;
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            margin: 10px 0;
+            box-sizing: border-box;
         }
         button {
-            background-color: #28a745;
+            background-color: #0e4c92;
             color: white;
+            padding: 10px;
+            width: 100%;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #003366;
         }
         .result {
-            margin-top: 10px;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h2>House Price Predictor</h2>
-        <form id="predict-form">
-            <input type="number" id="area" placeholder="Area (sq ft)" required>
-            <input type="number" id="bedrooms" placeholder="Bedrooms" required>
-            <input type="number" id="bathrooms" placeholder="Bathrooms" required>
-            <input type="number" id="stories" placeholder="Stories" required>
-            <input type="number" id="parking" placeholder="Parking Spaces" required>
+        <h2>House Price Prediction</h2>
+        <form id="predictionForm">
+            <label for="area">Area (sq ft):</label>
+            <input type="number" id="area" name="area" required>
+
+            <label for="bedrooms">Number of Bedrooms:</label>
+            <input type="number" id="bedrooms" name="bedrooms" required>
+
+            <label for="bathrooms">Number of Bathrooms:</label>
+            <input type="number" id="bathrooms" name="bathrooms" required>
+
+            <label for="stories">Number of Stories:</label>
+            <input type="number" id="stories" name="stories" required>
+
+            <label for="parking">Parking Spaces:</label>
+            <input type="number" id="parking" name="parking" required>
+
             <button type="submit">Predict Price</button>
         </form>
-        <div class="result" id="result"></div>
+
+        <div id="result" class="result" style="display:none;">
+            <p>Predicted Price: <span id="predictedPrice"></span></p>
+        </div>
     </div>
 
     <script>
-        document.getElementById('predict-form').addEventListener('submit', function(event) {
+        document.getElementById('predictionForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
             const area = document.getElementById('area').value;
@@ -65,31 +86,36 @@
             const stories = document.getElementById('stories').value;
             const parking = document.getElementById('parking').value;
 
-            fetch('http://127.0.0.1:5000/predict', {
+            const data = {
+                area: parseInt(area),
+                bedrooms: parseInt(bedrooms),
+                bathrooms: parseInt(bathrooms),
+                stories: parseInt(stories),
+                parking: parseInt(parking)
+            };
+
+            fetch('/predict', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    area: parseFloat(area),
-                    bedrooms: parseFloat(bedrooms),
-                    bathrooms: parseFloat(bathrooms),
-                    stories: parseFloat(stories),
-                    parking: parseFloat(parking),
-                }),
+                body: JSON.stringify(data)
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    document.getElementById('result').innerText = Predicted Price: $${data.predicted_price.toFixed(2)};
+                    document.getElementById('predictedPrice').textContent = data.predicted_price;
+                    document.getElementById('result').style.display = 'block';
                 } else {
-                    document.getElementById('result').innerText = Error: ${data.message};
+                    alert('Error: ' + data.message);
                 }
             })
             .catch(error => {
-                document.getElementById('result').innerText = Error: ${error};
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
             });
         });
     </script>
+
 </body>
 </html>
