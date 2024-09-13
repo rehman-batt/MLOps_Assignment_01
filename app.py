@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # Load the pre-trained model
 model = joblib.load('model.pkl')
@@ -39,5 +39,5 @@ def predict():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-if _name_ == '_main_':
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run()
