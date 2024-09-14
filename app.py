@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify, render_template
-import joblib
 import numpy as np
+from main import MultilinearRegression
+import pickle
 
 app = Flask(__name__)
 
 # Load the pre-trained model
-model = joblib.load('model.pkl')
+with open('model.pkl', 'rb') as f:
+    model = pickle.load(f)
 
 @app.route('/')
 def index():
