@@ -4,5 +4,4 @@ Data
 __pycache__
 .github
 .gitignore
-main.py
 README.md
