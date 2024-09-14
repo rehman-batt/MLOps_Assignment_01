@@ -1,0 +1,8 @@
+test_cases.py
+Data
+.pytest_cache
+__pycache__
+.github
+.gitignore
+main.py
+README.md
