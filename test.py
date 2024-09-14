@@ -11,7 +11,7 @@ def test_prediction_output_type():
     assert isinstance(prediction[0], (int, float))
 
 def test_zero_input():
-    sample_input = np.array([[0, 0, 0, 0, 0]])  # Zero values input
+    sample_input = np.array([[0, 0, 0, 0, 0]])  
     prediction = joblib.load('model.pkl').predict(sample_input)
     
     assert np.isfinite(prediction).all()
