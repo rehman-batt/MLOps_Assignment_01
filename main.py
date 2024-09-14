@@ -1,40 +1,52 @@
+import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-import joblib
+import pickle
 
-# Load the dataset
-file_path = '/content/Housing.csv'
-data = pd.read_csv(file_path)
+class MultilinearRegression:
+    def __init__(self):
+        self.coefficients = None
 
+    def fit(self, X, y):
+        # Add a column of ones to X for the intercept term
+        X_b = np.c_[np.ones((X.shape[0], 1)), X]  # Add bias term
+        # Calculate the coefficients using the Normal Equation
+        self.coefficients = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
 
-# Keep only the specified columns
-columns_to_keep = ['price', 'area', 'bedrooms', 'bathrooms', 'stories', 'parking']
-filtered_data = data[columns_to_keep]
+    def predict(self, X):
+        # Add a column of ones to X for the intercept term
+        X_b = np.c_[np.ones((X.shape[0], 1)), X]
+        return X_b.dot(self.coefficients)
 
-# Display the first few rows of the filtered dataset
-print(filtered_data.head())
+    def score(self, X, y):
+        y_pred = self.predict(X)
+        # Calculate R^2 score
+        total_variance = np.sum((y - np.mean(y)) ** 2)
+        explained_variance = np.sum((y_pred - y) ** 2)
+        return 1 - (explained_variance / total_variance)
 
-# Features and Target
-X = filtered_data.drop('price', axis=1)  # Features (drop the target column)
-y = filtered_data['price']               # Target (House Prices)
+def train_model():
+    # Load the data
+    data = pd.read_csv(r"D:\Fast NU\7th semester (pro max plus) shit\MLOps\Assignment_01\Data\Housing.csv")
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Select relevant features for the model
+    X = data[['area', 'bedrooms', 'bathrooms', 'stories', 'parking']].values
 
-# Model initialization
-model = LinearRegression()
+    # Select the target variable (label)
+    y = data['price'].values
 
-# Train the model
-model.fit(X_train, y_train)
+    # Instantiate and train the multilinear regression model
+    model = MultilinearRegression()
+    model.fit(X, y)
 
-# Predict on the test set
-y_pred = model.predict(X_test)
+    # Make predictions on the same data (you can also use different test data)
+    predictions = model.predict(X)
 
-# Calculate Mean Squared Error
-mse = mean_squared_error(y_test, y_pred)
-print(f'Mean Squared Error: {mse}')
+    # Print predictions and model performance
+    print("Predictions:", predictions[:5])  # Printing first 5 predictions for brevity
+    print("R^2 Score:", model.score(X, y))
 
-# Save the model to a file
-joblib.dump(model, 'model.pkl')
+    with open('model.pkl', 'wb') as f:
+        pickle.dump(model, f)
+
+if __name__ == '__main__':
+    train_model()
