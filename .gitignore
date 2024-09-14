@@ -1,1 +1,3 @@
-.github/workflows/deploy.yml
+.vercel
+.pytest_cache
+__pycache__
