@@ -70,7 +70,7 @@ jobs:
       - name: Merge stage into main
         run: |
           git checkout main
-          git merge stage --no-ff
+          git merge origin/stage --no-ff
           git push origin main
 
   Deploy-Production:
