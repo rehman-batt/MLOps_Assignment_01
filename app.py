@@ -16,7 +16,7 @@ def predict():
     try:
         # Get data from request
         data = request.get_json()
-
+ 
         # Ensure the correct features are provided
         required_features = ['area', 'bedrooms', 'bathrooms', 'stories', 'parking']
         if not all(feature in data for feature in required_features):
